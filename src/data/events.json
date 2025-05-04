@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Assemblée Générale",
+    "description": "Assemblée générale annuelle de l'organisation",
+    "date": "2024-06-15T14:00:00",
+    "location": "Salle de conférence A",
+    "organizer": 1,
+    "participants": [1, 2, 3, 4, 5],
+    "status": "planned"
+  },
+  {
+    "id": 2,
+    "title": "Réunion du Comité",
+    "description": "Réunion mensuelle du comité directeur",
+    "date": "2024-05-20T10:00:00",
+    "location": "Salle de réunion B",
+    "organizer": 1,
+    "participants": [1, 3, 4],
+    "status": "planned"
+  },
+  {
+    "id": 3,
+    "title": "Atelier de Formation",
+    "description": "Atelier sur les nouvelles technologies",
+    "date": "2024-05-25T09:00:00",
+    "location": "Laboratoire informatique",
+    "organizer": 2,
+    "participants": [2, 5, 6, 7],
+    "status": "planned"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Refonte du site web",
+    "description": "Modernisation du site web de l'organisation",
+    "startDate": "2024-05-01",
+    "endDate": "2024-07-30",
+    "manager": 1,
+    "members": [1, 2, 5],
+    "status": "in_progress"
+  },
+  {
+    "id": 2,
+    "title": "Organisation du gala annuel",
+    "description": "Préparation et coordination du gala de fin d'année",
+    "startDate": "2024-06-01",
+    "endDate": "2024-08-15",
+    "manager": 3,
+    "members": [3, 4, 6],
+    "status": "planning"
+  },
+  {
+    "id": 3,
+    "title": "Campagne de recrutement",
+    "description": "Recrutement de nouveaux membres pour l'organisation",
+    "startDate": "2024-05-15",
+    "endDate": "2024-06-30",
+    "manager": 4,
+    "members": [4, 5, 7],
+    "status": "planning"
+  }
+]

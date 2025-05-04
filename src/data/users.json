@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "email": "admin@example.com",
+    "password": "admin123",
+    "name": "Administrateur",
+    "role": "admin",
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "email": "user@example.com",
+    "password": "user123",
+    "name": "Utilisateur Test",
+    "role": "user",
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "email": "tresorier@example.com",
+    "password": "tresorier123",
+    "name": "Jean Dupont",
+    "role": "trésorier",
+    "status": "active"
+  },
+  {
+    "id": 4,
+    "email": "secretaire@example.com",
+    "password": "secretaire123",
+    "name": "Marie Martin",
+    "role": "secrétaire",
+    "status": "active"
+  },
+  {
+    "id": 5,
+    "email": "membre1@example.com",
+    "password": "membre123",
+    "name": "Pierre Durand",
+    "role": "membre",
+    "status": "active"
+  },
+  {
+    "id": 6,
+    "email": "membre2@example.com",
+    "password": "membre123",
+    "name": "Sophie Lefebvre",
+    "role": "membre",
+    "status": "blocked"
+  },
+  {
+    "id": 7,
+    "email": "membre3@example.com",
+    "password": "membre123",
+    "name": "Thomas Bernard",
+    "role": "membre",
+    "status": "active"
+  }
+]

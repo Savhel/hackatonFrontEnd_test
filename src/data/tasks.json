@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "title": "Préparer l'ordre du jour",
+    "description": "Rédiger et distribuer l'ordre du jour de l'assemblée générale",
+    "dueDate": "2024-06-10T18:00:00",
+    "assignedTo": 4,
+    "status": "pending",
+    "priority": "high",
+    "relatedTo": {
+      "type": "event",
+      "id": 1
+    }
+  },
+  {
+    "id": 2,
+    "title": "Réserver la salle",
+    "description": "Confirmer la réservation de la salle pour la réunion du comité",
+    "dueDate": "2024-05-15T18:00:00",
+    "assignedTo": 3,
+    "status": "completed",
+    "priority": "medium",
+    "relatedTo": {
+      "type": "event",
+      "id": 2
+    }
+  },
+  {
+    "id": 3,
+    "title": "Préparer les supports de formation",
+    "description": "Créer les présentations et documents pour l'atelier de formation",
+    "dueDate": "2024-05-20T18:00:00",
+    "assignedTo": 2,
+    "status": "in_progress",
+    "priority": "high",
+    "relatedTo": {
+      "type": "event",
+      "id": 3
+    }
+  },
+  {
+    "id": 4,
+    "title": "Maquette de la page d'accueil",
+    "description": "Concevoir la maquette de la nouvelle page d'accueil du site",
+    "dueDate": "2024-05-15T18:00:00",
+    "assignedTo": 5,
+    "status": "in_progress",
+    "priority": "high",
+    "relatedTo": {
+      "type": "project",
+      "id": 1
+    }
+  },
+  {
+    "id": 5,
+    "title": "Sélection du lieu pour le gala",
+    "description": "Rechercher et proposer des lieux potentiels pour le gala annuel",
+    "dueDate": "2024-06-15T18:00:00",
+    "assignedTo": 6,
+    "status": "pending",
+    "priority": "medium",
+    "relatedTo": {
+      "type": "project",
+      "id": 2
+    }
+  },
+  {
+    "id": 6,
+    "title": "Création des supports de communication",
+    "description": "Concevoir les affiches et flyers pour la campagne de recrutement",
+    "dueDate": "2024-05-25T18:00:00",
+    "assignedTo": 7,
+    "status": "pending",
+    "priority": "medium",
+    "relatedTo": {
+      "type": "project",
+      "id": 3
+    }
+  }
+]

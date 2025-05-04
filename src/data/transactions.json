@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "date": "2024-01-15T10:30:00",
+    "amount": 5000,
+    "type": "deposit",
+    "description": "Cotisation annuelle des membres",
+    "createdBy": 3
+  },
+  {
+    "id": 2,
+    "date": "2024-02-10T14:45:00",
+    "amount": 1200,
+    "type": "withdrawal",
+    "description": "Achat de matériel informatique",
+    "createdBy": 1,
+    "relatedTo": {
+      "type": "project",
+      "id": 1
+    }
+  },
+  {
+    "id": 3,
+    "date": "2024-02-25T09:15:00",
+    "amount": 800,
+    "type": "withdrawal",
+    "description": "Location de salle pour réunion",
+    "createdBy": 3,
+    "relatedTo": {
+      "type": "event",
+      "id": 1
+    }
+  },
+  {
+    "id": 4,
+    "date": "2024-03-05T11:00:00",
+    "amount": 3000,
+    "type": "deposit",
+    "description": "Subvention universitaire",
+    "createdBy": 1
+  },
+  {
+    "id": 5,
+    "date": "2024-03-20T16:30:00",
+    "amount": 500,
+    "type": "withdrawal",
+    "description": "Frais de communication",
+    "createdBy": 4,
+    "relatedTo": {
+      "type": "project",
+      "id": 3
+    }
+  },
+  {
+    "id": 6,
+    "date": "2024-04-10T13:45:00",
+    "amount": 1500,
+    "type": "deposit",
+    "description": "Dons d'entreprises partenaires",
+    "createdBy": 3
+  },
+  {
+    "id": 7,
+    "date": "2024-04-25T10:00:00",
+    "amount": 950,
+    "type": "withdrawal",
+    "description": "Préparation du gala annuel",
+    "createdBy": 3,
+    "relatedTo": {
+      "type": "project",
+      "id": 2
+    }
+  },
+  {
+    "id": 8,
+    "date": "2024-05-05T09:30:00",
+    "amount": 2000,
+    "type": "deposit",
+    "description": "Revenus de la vente de billets",
+    "createdBy": 1,
+    "relatedTo": {
+      "type": "event",
+      "id": 3
+    }
+  }
+]
