@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { financeService, Transaction } from '../../../services/financeService';
-import { Chart } from 'chart.js/auto';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+// import { Chart } from 'chart.js/auto';
+import { Line, Doughnut } from 'react-chartjs-2';
 
 export default function FinanceDashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -96,21 +96,21 @@ export default function FinanceDashboard() {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2">Solde Actuel</h2>
           <p className={`text-3xl font-bold ${currentBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {currentBalance.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+            {currentBalance.toLocaleString('fr-FR', { style: 'currency', currency: 'CFA' })}
           </p>
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2">Revenus Totaux</h2>
           <p className="text-3xl font-bold text-green-600">
-            {financeService.getTotalByType('deposit').toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+            {financeService.getTotalByType('deposit').toLocaleString('fr-FR', { style: 'currency', currency: 'CFA' })}
           </p>
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2">Dépenses Totales</h2>
           <p className="text-3xl font-bold text-red-600">
-            {financeService.getTotalByType('withdrawal').toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+            {financeService.getTotalByType('withdrawal').toLocaleString('fr-FR', { style: 'currency', currency: 'CFA' })}
           </p>
         </div>
       </div>
@@ -147,7 +147,7 @@ export default function FinanceDashboard() {
                     beginAtZero: true,
                     title: {
                       display: true,
-                      text: 'Montant (€)'
+                      text: 'Montant (CFA)'
                     }
                   },
                   x: {

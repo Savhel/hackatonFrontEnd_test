@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { financeService } from '../../../services/financeService';
+import { financeService, Transaction } from '../../../services/financeService';
 import { Project } from '../../../services/eventProjectService';
 import { Event } from '../../../services/eventProjectService';
 
@@ -15,7 +15,7 @@ export default function EntityFinancialReportPage() {
     totalExpenses: 0,
     balance: 0,
     contributions: 0,
-    transactions: []
+    transactions: [] as Transaction[]
   });
 
   useEffect(() => {
@@ -51,34 +51,36 @@ export default function EntityFinancialReportPage() {
 
   useEffect(() => {
     if (entityId) {
-      generateFinancialData();
+      (async () => {
+        await generateFinancialData();
+      })();
     }
   }, [entityType, entityId]);
 
-  const generateFinancialData = () => {
+  const generateFinancialData = async () => {
     const id = parseInt(entityId);
-    
+
     // Récupérer les transactions liées à cette entité
-    const transactions = financeService.getTransactionsByRelatedEntity(
+    const transactions = await financeService.getTransactionsByRelatedEntity(
       entityType as 'project' | 'event',
       id
     );
-    
+
     // Récupérer les contributions liées à cette entité
-    const contributions = financeService.getContributionsByRelatedEntity(
+    const contributions = await financeService.getContributionsByRelatedEntity(
       entityType as 'project' | 'event',
       id
     );
     
     // Calculer les totaux
-    const totalContributions = contributions.reduce((sum, c) => sum + c.amount, 0);
-    const totalRevenue = transactions
+    const totalContributions = (Array.isArray(contributions) ? contributions : []).reduce((sum, c): number => sum + c.amount, 0);
+    const totalRevenue = (Array.isArray(transactions) ? transactions : [])
       .filter(t => t.type === 'deposit')
-      .reduce((sum, t) => sum + t.amount, 0) + totalContributions;
+      .reduce((sum, t): number => sum + t.amount, 0) + totalContributions;
     
     const totalExpenses = transactions
       .filter(t => t.type === 'withdrawal')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t): number => sum + t.amount, 0);
     
     setFinancialData({
       totalRevenue,
@@ -111,7 +113,7 @@ export default function EntityFinancialReportPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type d'Entité</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Type d&#39;Entité</label>
             <select
               value={entityType}
               onChange={(e) => {

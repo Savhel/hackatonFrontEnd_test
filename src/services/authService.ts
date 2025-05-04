@@ -1,4 +1,4 @@
-import users from '../data/users.json';
+import { apiService } from './apiService';
 
 export interface User {
   id: number;
@@ -13,44 +13,94 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+  name: string;
+  role?: string;
+}
+
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
+  role?: string;
+  status?: string;
+}
+
 export const authService = {
   login: async ({ email, password }: LoginCredentials): Promise<User | null> => {
-    // Simuler un délai d'API
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Rechercher l'utilisateur dans les données JSON
-    const user = users.find(
-      (u: User & { password: string }) => u.email === email && u.password === password
-    );
-    
-    if (!user) return null;
-    
-    // Ne pas renvoyer le mot de passe
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = user;
-    
-    // Stocker l'utilisateur dans le localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+    try {
+      const response = await apiService.post<{ token: string; user: User }>('/auth/login', { email, password });
+      const { token, user } = response;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return user;
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
+      return null;
     }
-    
-    return userWithoutPassword as User;
   },
   
   logout: () => {
-    // Supprimer l'utilisateur du localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user');
-    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   },
   
   getCurrentUser: (): User | null => {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        return JSON.parse(userStr) as User;
-      }
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      return JSON.parse(userStr) as User;
     }
     return null;
+  },
+  
+  getAllUsers: async (): Promise<User[]> => {
+    try {
+      return await apiService.get<User[]>('/users');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs:', error);
+      return [];
+    }
+  },
+
+  register: async ({ email, password, name, role = 'user' }: RegisterCredentials): Promise<User | null> => {
+    try {
+      const response = await apiService.post<{ token: string; user: User }>('/auth/register', {
+        email,
+        password,
+        name,
+        role
+      });
+      
+      const { token, user } = response;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return user;
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
+      return null;
+    }
+  },
+
+  updateUser: async (userId: number, userData: UpdateUserData): Promise<User | null> => {
+    try {
+      return await apiService.put<User>(`/users/${userId}`, userData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
+      return null;
+    }
+  },
+
+  deleteUser: async (userId: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/users/${userId}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+      return false;
+    }
   }
 };

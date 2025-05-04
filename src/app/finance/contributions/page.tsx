@@ -182,7 +182,7 @@ export default function ContributionsPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID de l'entité</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">ID de l&#39;entité</label>
                 <input
                   type="number"
                   name="relatedId"

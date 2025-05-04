@@ -44,7 +44,7 @@ export default function GestionMembres() {
         // Pour ce prototype, on utilise directement les données du JSON
         const allUsers = await import('../../../data/users.json')
           .then(module => module.default)
-          .then(data => data.map(({ password, ...user }: any) => user));
+          .then(data => data.map(({ ...user }: User) => user));
         
         setUsers(allUsers);
       } catch (err) {
@@ -140,7 +140,7 @@ export default function GestionMembres() {
               href="/"
               className="rounded-md bg-gray-200 px-4 py-2 text-black hover:bg-gray-300"
             >
-              Retour à l'accueil
+              Retour à l&#39;accueil
             </Link>
             <button
               onClick={() => setShowAddForm(true)}

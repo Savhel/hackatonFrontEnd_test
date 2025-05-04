@@ -1,5 +1,4 @@
-import transactions from '../data/transactions.json';
-import contributions from '../data/contributions.json';
+import { apiService } from './apiService';
 
 export interface Transaction {
   id: number;
@@ -39,189 +38,134 @@ export interface FinancialReport {
 
 export const financeService = {
   // Fonctions pour les transactions
-  getAllTransactions: (): Transaction[] => {
-    const validTypes = ['event', 'project'] as const;
-    return transactions.filter(transaction => 
-      !transaction.relatedTo || validTypes.includes(transaction.relatedTo.type as typeof validTypes[number])
-    ) as Transaction[];
-  },
-
-  getTransactionById: (id: number): Transaction | undefined => {
-    const transaction = transactions.find(transaction => transaction.id === id);
-    if (!transaction) return undefined;
-
-    // Ensure relatedTo.type is correctly typed
-    if (transaction.relatedTo) {
-      const validTypes = ['event', 'project'] as const;
-      if (!validTypes.includes(transaction.relatedTo.type as typeof validTypes[number])) {
-        return undefined;
-      }
+  getAllTransactions: async (): Promise<Transaction[]> => {
+    try {
+      return await apiService.get<Transaction[]>('/transactions');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des transactions:', error);
+      return [];
     }
-    return transaction as Transaction ;
   },
 
-  getTransactionsByType: (type: 'deposit' | 'withdrawal'): Transaction[] => {
-    return transactions.filter(transaction => transaction.type === type) as Transaction[];
+  getTransactionById: async (id: number): Promise<Transaction | null> => {
+    try {
+      return await apiService.get<Transaction>(`/transactions/${id}`);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de la transaction ${id}:`, error);
+      return null;
+    }
   },
 
-  getTransactionsByRelatedEntity: (type: 'event' | 'project', id: number): Transaction[] => {
-    return transactions.filter(
-      transaction => transaction.relatedTo?.type === type && transaction.relatedTo?.id === id
-    );
+  getTransactionsByType: async (type: 'deposit' | 'withdrawal'): Promise<Transaction[]> => {
+    try {
+      return await apiService.get<Transaction[]>(`/transactions/type/${type}`);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des transactions par type:', error);
+      return [];
+    }
   },
 
-  getCurrentBalance: (): number => {
-    return transactions.reduce((balance, transaction) => {
-      return transaction.type === 'deposit'
-        ? balance + transaction.amount
-        : balance - transaction.amount;
-    }, 0);
+  getTransactionsByRelatedEntity: async (type: 'event' | 'project', id: number): Promise<Transaction[]> => {
+    try {
+      return await apiService.get<Transaction[]>(`/transactions/related/${type}/${id}`);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des transactions liées:', error);
+      return [];
+    }
+  },
+
+  getCurrentBalance: async (): Promise<number> => {
+    try {
+      const response = await apiService.get<{ balance: number }>('/transactions/balance');
+      return response.balance;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du solde:', error);
+      return 0;
+    }
+  },
+
+  createTransaction: async (transactionData: Omit<Transaction, 'id'>): Promise<Transaction | null> => {
+    try {
+      return await apiService.post<Transaction>('/transactions', transactionData);
+    } catch (error) {
+      console.error('Erreur lors de la création de la transaction:', error);
+      return null;
+    }
+  },
+
+  updateTransaction: async (id: number, transactionData: Partial<Omit<Transaction, 'id'>>): Promise<Transaction | null> => {
+    try {
+      return await apiService.put<Transaction>(`/transactions/${id}`, transactionData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la transaction:', error);
+      return null;
+    }
+  },
+
+  deleteTransaction: async (id: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/transactions/${id}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la transaction:', error);
+      return false;
+    }
   },
 
   // Fonctions pour les contributions
-  getAllContributions: (): Contribution[] => {
-    return contributions as Contribution[];
+  getAllContributions: async (): Promise<Contribution[]> => {
+    try {
+      return await apiService.get<Contribution[]>('/contributions');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des contributions:', error);
+      return [];
+    }
   },
 
-  getContributionById: (id: number): Contribution | undefined => {
-    return contributions.find(contribution => contribution.id === id) as Contribution;
+  getContributionById: async (id: number): Promise<Contribution | null> => {
+    try {
+      return await apiService.get<Contribution>(`/contributions/${id}`);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de la contribution ${id}:`, error);
+      return null;
+    }
   },
 
-  getContributionsByContributor: (contributorId: number): Contribution[] => {
-    return contributions.filter(contribution => contribution.contributorId === contributorId) as Contribution[];
+  createContribution: async (contributionData: Omit<Contribution, 'id'>): Promise<Contribution | null> => {
+    try {
+      return await apiService.post<Contribution>('/contributions', contributionData);
+    } catch (error) {
+      console.error('Erreur lors de la création de la contribution:', error);
+      return null;
+    }
   },
 
-  getContributionsByRelatedEntity: (
-    type: 'event' | 'project' | 'organization',
-    id: number
-  ): Contribution[] => {
-    return contributions.filter(
-      contribution => contribution.relatedTo.type === type && contribution.relatedTo.id === id
-    ) as Contribution[];
+  updateContribution: async (id: number, contributionData: Partial<Omit<Contribution, 'id'>>): Promise<Contribution | null> => {
+    try {
+      return await apiService.put<Contribution>(`/contributions/${id}`, contributionData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la contribution:', error);
+      return null;
+    }
   },
 
-  getTotalContributionsByEntity: (
-    type: 'event' | 'project' | 'organization',
-    id: number
-  ): number => {
-    const entityContributions = contributions.filter(
-      contribution => contribution.relatedTo.type === type && contribution.relatedTo.id === id
-    );
-    return entityContributions.reduce((total, contribution) => total + contribution.amount, 0);
+  deleteContribution: async (id: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/contributions/${id}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la contribution:', error);
+      return false;
+    }
   },
 
-  // Génération de rapports financiers
-  generateFinancialReport: (startDate: string, endDate: string): FinancialReport => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // Filtrer les transactions dans la période
-    const periodTransactions = transactions.filter(transaction => {
-      const transactionDate = new Date(transaction.date);
-      return transactionDate >= start && transactionDate <= end;
-    });
-
-    // Calculer le solde initial (toutes les transactions avant la date de début)
-    const initialBalance = transactions
-      .filter(transaction => new Date(transaction.date) < start)
-      .reduce(
-        (balance, transaction) =>
-          transaction.type === 'deposit'
-            ? balance + transaction.amount
-            : balance - transaction.amount,
-        0
-      );
-
-    // Séparer les dépôts et retraits
-    const deposits = periodTransactions.filter(t => t.type === 'deposit');
-    const withdrawals = periodTransactions.filter(t => t.type === 'withdrawal');
-
-    // Calculer les totaux
-    const totalDeposits = deposits.reduce((sum, t) => sum + t.amount, 0);
-    const totalWithdrawals = withdrawals.reduce((sum, t) => sum + t.amount, 0);
-
-    // Calculer le solde final
-    const finalBalance = initialBalance + totalDeposits - totalWithdrawals;
-
-    return {
-      startDate,
-      endDate,
-      initialBalance,
-      finalBalance,
-      deposits,
-      withdrawals,
-      totalDeposits,
-      totalWithdrawals
-    };
-  },
-
-  // Fonctions pour les bilans de projets et événements
-  generateProjectFinancialSummary: (projectId: number) => {
-    const projectTransactions = transactions.filter(
-      t => t.relatedTo?.type === 'project' && t.relatedTo.id === projectId
-    );
-    const projectContributions = contributions.filter(
-      c => c.relatedTo.type === 'project' && c.relatedTo.id === projectId
-    );
-
-    const totalExpenses = projectTransactions
-      .filter(t => t.type === 'withdrawal')
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    const totalIncome = projectContributions.reduce((sum, c) => sum + c.amount, 0);
-
-    return {
-      projectId,
-      totalExpenses,
-      totalIncome,
-      balance: totalIncome - totalExpenses,
-      transactions: projectTransactions,
-      contributions: projectContributions
-    };
-  },
-
-  generateEventFinancialSummary: (eventId: number) => {
-    const eventTransactions = transactions.filter(
-      t => t.relatedTo?.type === 'event' && t.relatedTo.id === eventId
-    );
-    const eventContributions = contributions.filter(
-      c => c.relatedTo.type === 'event' && c.relatedTo.id === eventId
-    );
-
-    const totalExpenses = eventTransactions
-      .filter(t => t.type === 'withdrawal')
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    const totalIncome = eventContributions.reduce((sum, c) => sum + c.amount, 0);
-
-    return {
-      eventId,
-      totalExpenses,
-      totalIncome,
-      balance: totalIncome - totalExpenses,
-      transactions: eventTransactions,
-      contributions: eventContributions
-    };
-  },
-
-  // Fonction pour obtenir l'historique des transactions pour le graphique
-  getTransactionHistory: (): { date: string; balance: number }[] => {
-    // Trier les transactions par date
-    const sortedTransactions = [...transactions].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-
-    // Calculer le solde cumulatif pour chaque date
-    let runningBalance = 0;
-    return sortedTransactions.map(transaction => {
-      runningBalance =
-        transaction.type === 'deposit'
-          ? runningBalance + transaction.amount
-          : runningBalance - transaction.amount;
-      return {
-        date: transaction.date,
-        balance: runningBalance
-      };
-    });
+  // Fonction pour les rapports financiers
+  getFinancialReport: async (startDate: string, endDate: string): Promise<FinancialReport | null> => {
+    try {
+      return await apiService.get<FinancialReport>(`/reports/financial?startDate=${startDate}&endDate=${endDate}`);
+    } catch (error) {
+      console.error('Erreur lors de la génération du rapport financier:', error);
+      return null;
+    }
   }
 };

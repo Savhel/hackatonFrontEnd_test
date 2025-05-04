@@ -1,7 +1,4 @@
-import events from '../data/events.json';
-import projects from '../data/projects.json';
-import tasks from '../data/tasks.json';
-import users from '../data/users.json';
+import { apiService } from './apiService';
 import { User } from './authService';
 
 export interface Event {
@@ -42,65 +39,175 @@ export interface Task {
 
 export const eventProjectService = {
   // Fonctions pour les événements
-  getAllEvents: (): Event[] => {
-    return events as Event[];
+  getAllEvents: async (): Promise<Event[]> => {
+    try {
+      return await apiService.get<Event[]>('/events');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des événements:', error);
+      return [];
+    }
   },
 
-  getEventById: (id: number): Event | undefined => {
-    return events.find(event => event.id === id) as Event;
+  getEventById: async (id: number): Promise<Event | null> => {
+    try {
+      return await apiService.get<Event>(`/events/${id}`);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de l'événement ${id}:`, error);
+      return null;
+    }
   },
 
-  getEventOrganizer: (event: Event): User | undefined => {
-    return users.find(user => user.id === event.organizer);
+  getEventOrganizer: async (event: Event): Promise<User | null> => {
+    try {
+      return await apiService.get<User>(`/users/${event.organizer}`);
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'organisateur:', error);
+      return null;
+    }
   },
 
-  getEventParticipants: (event: Event): User[] => {
-    return users.filter(user => event.participants.includes(user.id));
+  getEventParticipants: async (event: Event): Promise<User[]> => {
+    try {
+      const participants = await Promise.all(
+        event.participants.map(userId =>
+          apiService.get<User>(`/users/${userId}`)
+        )
+      );
+      return participants.filter((user): user is User => user !== null);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des participants:', error);
+      return [];
+    }
   },
 
-  getEventTasks: (eventId: number): Task[] => {
-    return tasks.filter(task => task.relatedTo.type === 'event' && task.relatedTo.id === eventId) as Task[] ;
+  getEventTasks: async (eventId: number): Promise<Task[]> => {
+    try {
+      return await apiService.get<Task[]>(`/events/${eventId}/tasks`);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des tâches:', error);
+      return [];
+    }
+  },
+
+  createEvent: async (eventData: Omit<Event, 'id'>): Promise<Event | null> => {
+    try {
+      return await apiService.post<Event>('/events', eventData);
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'événement:', error);
+      return null;
+    }
+  },
+
+  updateEvent: async (id: number, eventData: Partial<Omit<Event, 'id'>>): Promise<Event | null> => {
+    try {
+      return await apiService.put<Event>(`/events/${id}`, eventData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'événement:', error);
+      return null;
+    }
+  },
+
+  deleteEvent: async (id: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/events/${id}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'événement:', error);
+      return false;
+    }
   },
 
   // Fonctions pour les projets
-  getAllProjects: (): Project[] => {
-    return projects as Project[];
+  getAllProjects: async (): Promise<Project[]> => {
+    try {
+      return await apiService.get<Project[]>('/projects');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des projets:', error);
+      return [];
+    }
   },
 
-  getProjectById: (id: number): Project | undefined => {
-    return projects.find(project => project.id === id) as Project;
+  getProjectById: async (id: number): Promise<Project | null> => {
+    try {
+      return await apiService.get<Project>(`/projects/${id}`);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération du projet ${id}:`, error);
+      return null;
+    }
   },
 
-  getProjectManager: (project: Project): User | undefined => {
-    return users.find(user => user.id === project.manager);
+  createProject: async (projectData: Omit<Project, 'id'>): Promise<Project | null> => {
+    try {
+      return await apiService.post<Project>('/projects', projectData);
+    } catch (error) {
+      console.error('Erreur lors de la création du projet:', error);
+      return null;
+    }
   },
 
-  getProjectMembers: (project: Project): User[] => {
-    return users.filter(user => project.members.includes(user.id));
+  updateProject: async (id: number, projectData: Partial<Omit<Project, 'id'>>): Promise<Project | null> => {
+    try {
+      return await apiService.put<Project>(`/projects/${id}`, projectData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du projet:', error);
+      return null;
+    }
   },
 
-  getProjectTasks: (projectId: number): Task[] => {
-    return tasks.filter(task => task.relatedTo.type === 'project' && task.relatedTo.id === projectId) as Task[];
+  deleteProject: async (id: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/projects/${id}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression du projet:', error);
+      return false;
+    }
   },
 
   // Fonctions pour les tâches
-  getAllTasks: (): Task[] => {
-    return tasks as Task[];
+  getAllTasks: async (): Promise<Task[]> => {
+    try {
+      return await apiService.get<Task[]>('/tasks');
+    } catch (error) {
+      console.error('Erreur lors de la récupération des tâches:', error);
+      return [];
+    }
   },
 
-  getTaskById: (id: number): Task | undefined => {
-    return tasks.find(task => task.id === id) as Task;
+  getTaskById: async (id: number): Promise<Task | null> => {
+    try {
+      return await apiService.get<Task>(`/tasks/${id}`);
+    } catch (error) {
+      console.error(`Erreur lors de la récupération de la tâche ${id}:`, error);
+      return null;
+    }
   },
 
-  getTaskAssignee: (task: Task): User | undefined => {
-    return users.find(user => user.id === task.assignedTo);
+  createTask: async (taskData: Omit<Task, 'id'>): Promise<Task | null> => {
+    try {
+      return await apiService.post<Task>('/tasks', taskData);
+    } catch (error) {
+      console.error('Erreur lors de la création de la tâche:', error);
+      return null;
+    }
   },
 
-  getRelatedEntity: (task: Task): Event | Project | undefined => {
-    if (task.relatedTo.type === 'event') {
-      return events.find(event => event.id === task.relatedTo.id) as Event;
-    } else {
-      return projects.find(project => project.id === task.relatedTo.id) as Project;
+  updateTask: async (id: number, taskData: Partial<Omit<Task, 'id'>>): Promise<Task | null> => {
+    try {
+      return await apiService.put<Task>(`/tasks/${id}`, taskData);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la tâche:', error);
+      return null;
+    }
+  },
+
+  deleteTask: async (id: number): Promise<boolean> => {
+    try {
+      await apiService.delete(`/tasks/${id}`);
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la tâche:', error);
+      return false;
     }
   }
 };
