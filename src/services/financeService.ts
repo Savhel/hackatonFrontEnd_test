@@ -1,6 +1,3 @@
-import { User } from './authService';
-import { Event } from './eventProjectService';
-import { Project } from './eventProjectService';
 import transactions from '../data/transactions.json';
 import contributions from '../data/contributions.json';
 
@@ -8,11 +5,11 @@ export interface Transaction {
   id: number;
   date: string;
   amount: number;
-  type: 'deposit' | 'withdrawal';
+  type: string;
   description: string;
   createdBy: number;
   relatedTo?: {
-    type: 'event' | 'project';
+    type: string;
     id: number;
   };
 }
@@ -43,16 +40,28 @@ export interface FinancialReport {
 export const financeService = {
   // Fonctions pour les transactions
   getAllTransactions: (): Transaction[] => {
-    // @ts-expect-error
-    return transactions;
+    const validTypes = ['event', 'project'] as const;
+    return transactions.filter(transaction => 
+      !transaction.relatedTo || validTypes.includes(transaction.relatedTo.type as typeof validTypes[number])
+    ) as Transaction[];
   },
 
   getTransactionById: (id: number): Transaction | undefined => {
-    return transactions.find(transaction => transaction.id === id);
+    const transaction = transactions.find(transaction => transaction.id === id);
+    if (!transaction) return undefined;
+
+    // Ensure relatedTo.type is correctly typed
+    if (transaction.relatedTo) {
+      const validTypes = ['event', 'project'] as const;
+      if (!validTypes.includes(transaction.relatedTo.type as typeof validTypes[number])) {
+        return undefined;
+      }
+    }
+    return transaction as Transaction ;
   },
 
   getTransactionsByType: (type: 'deposit' | 'withdrawal'): Transaction[] => {
-    return transactions.filter(transaction => transaction.type === type);
+    return transactions.filter(transaction => transaction.type === type) as Transaction[];
   },
 
   getTransactionsByRelatedEntity: (type: 'event' | 'project', id: number): Transaction[] => {
@@ -71,15 +80,15 @@ export const financeService = {
 
   // Fonctions pour les contributions
   getAllContributions: (): Contribution[] => {
-    return contributions;
+    return contributions as Contribution[];
   },
 
   getContributionById: (id: number): Contribution | undefined => {
-    return contributions.find(contribution => contribution.id === id);
+    return contributions.find(contribution => contribution.id === id) as Contribution;
   },
 
   getContributionsByContributor: (contributorId: number): Contribution[] => {
-    return contributions.filter(contribution => contribution.contributorId === contributorId);
+    return contributions.filter(contribution => contribution.contributorId === contributorId) as Contribution[];
   },
 
   getContributionsByRelatedEntity: (
@@ -88,7 +97,7 @@ export const financeService = {
   ): Contribution[] => {
     return contributions.filter(
       contribution => contribution.relatedTo.type === type && contribution.relatedTo.id === id
-    );
+    ) as Contribution[];
   },
 
   getTotalContributionsByEntity: (

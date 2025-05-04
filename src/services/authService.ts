@@ -20,12 +20,13 @@ export const authService = {
     
     // Rechercher l'utilisateur dans les données JSON
     const user = users.find(
-      (u: any) => u.email === email && u.password === password
+      (u: User & { password: string }) => u.email === email && u.password === password
     );
     
     if (!user) return null;
     
     // Ne pas renvoyer le mot de passe
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
     
     // Stocker l'utilisateur dans le localStorage

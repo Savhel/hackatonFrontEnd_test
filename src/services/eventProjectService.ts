@@ -43,11 +43,11 @@ export interface Task {
 export const eventProjectService = {
   // Fonctions pour les événements
   getAllEvents: (): Event[] => {
-    return events;
+    return events as Event[];
   },
 
   getEventById: (id: number): Event | undefined => {
-    return events.find(event => event.id === id);
+    return events.find(event => event.id === id) as Event;
   },
 
   getEventOrganizer: (event: Event): User | undefined => {
@@ -59,16 +59,16 @@ export const eventProjectService = {
   },
 
   getEventTasks: (eventId: number): Task[] => {
-    return tasks.filter(task => task.relatedTo.type === 'event' && task.relatedTo.id === eventId);
+    return tasks.filter(task => task.relatedTo.type === 'event' && task.relatedTo.id === eventId) as Task[] ;
   },
 
   // Fonctions pour les projets
   getAllProjects: (): Project[] => {
-    return projects;
+    return projects as Project[];
   },
 
   getProjectById: (id: number): Project | undefined => {
-    return projects.find(project => project.id === id);
+    return projects.find(project => project.id === id) as Project;
   },
 
   getProjectManager: (project: Project): User | undefined => {
@@ -80,16 +80,16 @@ export const eventProjectService = {
   },
 
   getProjectTasks: (projectId: number): Task[] => {
-    return tasks.filter(task => task.relatedTo.type === 'project' && task.relatedTo.id === projectId);
+    return tasks.filter(task => task.relatedTo.type === 'project' && task.relatedTo.id === projectId) as Task[];
   },
 
   // Fonctions pour les tâches
   getAllTasks: (): Task[] => {
-    return tasks;
+    return tasks as Task[];
   },
 
   getTaskById: (id: number): Task | undefined => {
-    return tasks.find(task => task.id === id);
+    return tasks.find(task => task.id === id) as Task;
   },
 
   getTaskAssignee: (task: Task): User | undefined => {
@@ -98,9 +98,9 @@ export const eventProjectService = {
 
   getRelatedEntity: (task: Task): Event | Project | undefined => {
     if (task.relatedTo.type === 'event') {
-      return events.find(event => event.id === task.relatedTo.id);
+      return events.find(event => event.id === task.relatedTo.id) as Event;
     } else {
-      return projects.find(project => project.id === task.relatedTo.id);
+      return projects.find(project => project.id === task.relatedTo.id) as Project;
     }
   }
 };
