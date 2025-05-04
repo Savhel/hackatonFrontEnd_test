@@ -66,7 +66,7 @@ export default function EntityFinancialReportPage() {
       id
     );
 
-    // Récupérer les contributions liées à cette entité
+    // Récupérer les contributions liées à cette en
     const contributions = await financeService.getContributionsByRelatedEntity(
       entityType as 'project' | 'event',
       id

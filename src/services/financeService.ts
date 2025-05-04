@@ -74,6 +74,15 @@ export const financeService = {
     }
   },
 
+  getContributionsByRelatedEntity: async (type: 'event' | 'project', id: number): Promise<Transaction[]> => {
+    try {
+      return await apiService.get<Transaction[]>(`/contributions/related/${type}/${id}`);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des transactions liées:', error);
+      return [];
+    }
+  },
+
   getCurrentBalance: async (): Promise<number> => {
     try {
       const response = await apiService.get<{ balance: number }>('/transactions/balance');
